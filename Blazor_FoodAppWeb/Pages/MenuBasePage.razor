@@ -1,0 +1,370 @@
+﻿@using Blazor_FoodAppWeb.Data
+@inject Blazor_FoodAppWeb.IService.IMenuService menuService
+@using Blazor_FoodAppWeb.PageClass
+
+@page "/menuTry"
+
+<PageTitle>Menu</PageTitle>
+
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+        scroll-behavior: smooth;
+        list-style: none;
+        text-decoration: none;
+    }
+
+    :root {
+        --main-color: #F24E1E;
+        --text-color: #2e2e2e;
+        --bg-color: #d9d9d9;
+        --big-font: 5rem;
+        --h2-font: 2.25rem;
+        --p-font: 0.9rem;
+    }
+
+    *::selection {
+        background: var(--main-color);
+        color: #fff;
+    }
+
+    body {
+        color: var(--text-color);
+        background: var(--bg-color);
+    }
+
+    section {
+        padding: 40px;
+        width: 100%;
+        height: auto;
+    }
+
+    .menu-container {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, auto));
+        grid-gap: 1.5rem;
+        align-items: center;
+    }
+
+    .box {
+        position: relative;
+        margin-top: 4rem;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        padding: 20px;
+        border-radius: 0.5rem;
+    }
+
+    .box-img {
+        width: 180px;
+        height: 180px;
+    }
+
+        .box-img img {
+            width: 100%;
+            height: 100%;
+        }
+
+    .box h2 {
+        font-size: 1.3rem;
+        color: var(--text-color);
+    }
+
+    .box h3 {
+        font-size: 1rem;
+        color: var(--text-color);
+        font-weight: 400;
+        margin: 4px 0 10px;
+    }
+
+    .box span {
+        font-size: var(--p-font);
+        color: #F24E1E;
+        font-weight: 600;
+    }
+
+    .box .bx {
+        background: var(--main-color);
+        position: absolute;
+        right: 0;
+        top: 0;
+        font-size: 20px;
+        padding: 7px 10px;
+        border-radius: 0 0.5rem 0 0.5rem;
+        color: #fff;
+    }
+
+    /*----------------------------*/
+
+
+    a {
+        text-decoration: none;
+        color: #2e2e2e;
+        font-weight: 600;
+    }
+
+    #header {
+        background: #fff;
+        width: 100%;
+        position: relative
+    }
+
+        #header:after {
+            content: "";
+            clear: both;
+            display: block
+        }
+
+    .headerlink {
+        margin-right: 100px;
+    }
+
+    input {
+        border: none;
+        padding: 10px;
+        border-radius: 20px
+    }
+
+    .logo {
+        float: left;
+        padding: 20px 0 20px;
+        margin-left: 50px;
+    }
+
+        .logo a {
+            font-size: 35px;
+            display: block;
+            padding: 0 0 0 20px;
+        }
+
+    nav {
+        float: right;
+    }
+
+        nav > ul {
+            float: left;
+            position: relative
+        }
+
+        nav li {
+            list-style: none;
+            float: left
+        }
+
+            nav li a {
+                float: left;
+                padding: 35px
+            }
+
+                nav li a:hover {
+                    background: #f89779
+                }
+
+    nav {
+        display: none;
+        width: 100%;
+        clear: both;
+        float: none;
+        max-height: 400px;
+        overflow-y: scroll
+    }
+
+    nav {
+        padding: 10px
+    }
+
+        nav ul {
+            float: none
+        }
+
+        nav li {
+            float: none
+        }
+
+        nav ul li a {
+            float: none;
+            padding: 8px;
+            display: block
+        }
+
+    }
+</style>
+
+<head>
+
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+    
+
+<div class="row">
+    <div class="col-md-4">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th>Photo</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if(Menus.Count()>0)
+                {
+                    @foreach(var mnu in Menus)
+                    {
+                        <tr>
+                            <td>@mnu.Name</td>
+                            <td>@mnu.Description</td>
+                            <td>@mnu.Price</td>
+                            <td>@mnu.Category</td>
+                            <td><img src="@imgSrc" width="200" height="200" style="border:1px solid #000000; margin-top:10px;"/></td>
+                            <td>
+                                <button class="btn btn-danger" @onclick="@(e => Edit(@mnu.Id))">Detail</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Name: </label>
+                    </div>
+                    <div class="col-md-10">
+                        <input @bind="menu.Name" type="text" placeholder="Menu Name" style="width:100%;"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Desc: </label>
+                    </div>
+                    <div class="col-md-10">
+                        <input @bind="menu.Description" type="text" placeholder="Menu Desc" style="width:100%;" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Price: </label>
+                    </div>
+                    <div class="col-md-10">
+                        <input @bind="menu.Price" type="number" placeholder="Menu Price" style="width:100%;" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Category: </label>
+                    </div>
+                    <div class="col-md-10">
+                        <input @bind="menu.Category" type="text" placeholder="Menu Category" style="width:100%;" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Photo: </label>
+                    </div>
+                    <div class="col-md-10">
+                        <BlazorInputFile.InputFile OnChange="HandleFileSelection"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <img src="@imgSrc" width="200" height="200" style="border:1px solid #000000; margin-top:10px; "/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button @onclick="@SaveMenu" class="btn btn-primary" style="width:100%; margin-top:10px;">Save</button>
+                <span style="font-weight:bold; font-size:24px;">@Message</span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+@code {
+
+    Menu menu = new Menu();
+    List<Menu> Menus = new List<Menu>();
+
+    string imgSrc = "";
+    string Message = "";
+    IFileListEntry file = null;
+    byte[] _fileBytes = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetMenus();
+    }
+
+    private void GetMenus()
+    {
+        Menus = menuService.GetMenus();
+    }
+
+    public async Task HandleFileSelection(IFileListEntry[] files)
+    {
+
+        if (files.Count() > 0)
+        {
+            file = files.FirstOrDefault();
+            using (var memoryStream = new System.IO.MemoryStream())
+            {
+                await file.Data.CopyToAsync(memoryStream);
+                _fileBytes = memoryStream.ToArray();
+
+                MenuPC menuPC = new MenuPC(menuService);
+                var photo = menuPC.GetImage(Convert.ToBase64String(_fileBytes));
+
+                imgSrc = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(photo));
+
+            }
+        }
+    }
+
+    public void SaveMenu()
+    {
+        MenuPC menuPC = new MenuPC(menuService);
+
+        Message = menuPC.SaveInformation(_fileBytes, menu);
+
+        menu = new Menu();
+        imgSrc = "";
+        GetMenus();
+    }
+
+    private void Edit(string menuId)
+    {
+        MenuPC menuPC = new MenuPC(menuService);
+        menu = menuPC.GetMenu(menuId);
+        imgSrc = menu.ImageUrl;
+        Message = "";
+    }
+
+    public void GetMenu()
+    {
+
+    }
+}

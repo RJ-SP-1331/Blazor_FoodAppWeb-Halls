@@ -1,0 +1,152 @@
+﻿@using Blazor_FoodAppWeb.Data
+@inject Blazor_FoodAppWeb.IService.IDeliveryMan deliveryManService
+@page "/delivery"
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="row">
+            <div class="col-md-4">
+                <label>First Name</label>
+            </div>
+            <div class="col-md-8">
+                <input @bind="delivery.FirstName" style="width:100%;" placeholder="Delivery Name" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <label>Last Name</label>
+            </div>
+            <div class="col-md-8">
+                <input @bind="delivery.LastName" style="width:100%;" placeholder="Delivery Last Name" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <label>Second Last Name</label>
+            </div>
+            <div class="col-md-8">
+                <input @bind="delivery.SecondLastName" style="width:100%;" placeholder="Delivery Second Last Name" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <label>Phone Number</label>
+            </div>
+            <div class="col-md-8">
+                <input @bind="delivery.PhoneNumber" type="number" style="width:100%;" placeholder="Delivery Phone Number" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <label>Email</label>
+            </div>
+            <div class="col-md-8">
+                <input @bind="delivery.Email" style="width:100%;" placeholder="Delivery Email" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <label>Password</label>
+            </div>
+            <div class="col-md-8">
+                <input @bind="delivery.Password" style="width:100%;" placeholder="Delivery Password" />
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <label>Shift</label>
+            </div>
+            <div class="col-md-8">
+                <input @bind="delivery.Shift" style="width:100%;" placeholder="Delivery Shift" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+                <button class="btn btn-primary" @onclick="@(e => Save())">Save</button>
+                <button class="btn btn-danger" @onclick="@(e => Reset())" style="float:right;">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Delivery Id</th>
+                    <th>Delivery Fisrt Name</th>
+                    <th>Delivery Last Name</th>
+                    <th>Delivery Second Last Name</th>
+                    <th>Delivery Phone Number</th>
+                    <th>Delivery Email</th>
+                    <th>Delivery Password</th>
+                    <th>Delivery Shift</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (deliveryList.Count() > 0)
+                {
+                    @foreach (var dlv in deliveryList)
+                    {
+                        <tr>
+                            <td>@dlv.Id</td>
+                            <td>@dlv.FirstName</td>
+                            <td>@dlv.LastName</td>
+                            <td>@dlv.SecondLastName</td>
+                            <td>@dlv.PhoneNumber</td>
+                            <td>@dlv.Email</td>
+                            <td>@dlv.Password</td>
+                            <td>@dlv.Shift</td>
+                            <td>
+                                <button class="btn btn-primary" @onclick="@(e => Edit(@dlv.Id))">Edit</button>
+                                <button class="btn btn-danger" @onclick="@(e => Delete(@dlv.Id))">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code
+{
+    DeliveryMan delivery = new DeliveryMan();
+    List<DeliveryMan> deliveryList = new List<DeliveryMan>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetDeliveries();
+    }
+
+    private void GetDeliveries()
+    {
+        deliveryList = deliveryManService.GetDeliveryMen();
+    }
+
+    private void Save()
+    {
+        deliveryManService.SaveOrUpdate(delivery);
+        Reset();
+        GetDeliveries();
+    }
+    
+    private void Reset()
+    {
+        delivery = new DeliveryMan();
+    }
+    
+    private void Edit(string deliveryMId)
+    {
+        delivery = deliveryManService.GetDeliveryMan(deliveryMId);
+    }
+    
+    private void Delete(string deliveryMId)
+    {
+        deliveryManService.Delete(deliveryMId);
+        GetDeliveries();
+    }
+}
